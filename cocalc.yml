@@ -1,0 +1,30 @@
+- hosts: cocalc
+  become: true
+  #  gather_facts: no
+  pre_tasks:
+    - name: 'install python3'
+      raw: sudo apt -y install python3
+      tags:
+        - sshkeys
+
+  roles:
+    - role: ssh-auth
+      home_sweet_home: false
+      users:
+        jonas:
+          - jonas@DESKTOP-555CQRO
+          - jonas@OmicronTheta
+      accounts:
+        - jonas
+      admins:
+        - jonas
+      ssh_public_key_store: 'admin_ssh_keys'
+      tags:
+        - sshkeys
+    - role: geerlingguy.docker
+      docker_users:
+        - jonas
+        - ansible
+      tags:
+        - dockerinstall
+    - role: cocalc_docker

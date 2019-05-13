@@ -1,0 +1,6 @@
+[submodule "roles/geerlingguy.docker"]
+	path = roles/geerlingguy.docker
+	url = git@github.com:geerlingguy/ansible-role-docker.git
+[submodule "roles/ssh-auth"]
+	path = roles/ssh-auth
+	url = git@github.com:ffbsee/role-ssh_authorized_keys.git

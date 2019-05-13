@@ -1,0 +1,23 @@
+---
+- name: "Install pip"
+  apt:
+    name: python3-pip
+
+- name: "Install docker python module"
+  pip:
+    name: docker
+
+- name: "Build cocalc docker image"
+  docker_image:
+    name: sagemathinc/cocalc
+
+- name: "Set up cocalc docker containter"
+  docker_container:
+    image: sagemathinc/cocalc
+    name: cocalc
+    ports:
+      - "443:443"
+    volumes:
+      - "/home/ansible/cocalc:/projects"
+    keep_volumes: true
+
