@@ -28,6 +28,11 @@
     path: "/home/ansible/cc_run/.well-known"
     state: directory
 
+- name: "Create acme-challenge directory"
+  file:
+    path: "/home/ansible/cc_run/acme-challenge"
+    state: directory
+
 - name: "Create certificate directory symlinks"
   file:
     path: "/home/ansible/cc_run/.well-known/acme-challenge"
