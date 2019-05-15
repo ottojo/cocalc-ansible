@@ -17,7 +17,19 @@
     name: cocalc
     ports:
       - "443:443"
+      - "80:80"
     volumes:
       - "/home/ansible/cocalc:/projects"
+      - "/home/ansible/cc_run:/run"
     keep_volumes: true
 
+- name: "Create certificate directory"
+  file:
+    path: "/home/ansible/cc_run/.well-known"
+    state: directory
+
+- name: "Create certificate directory symlinks"
+  file:
+    path: "/home/ansible/cc_run/.well-known/acme-challenge"
+    src: "/home/ansible/cc_run/acme-challenge/"
+    state: link

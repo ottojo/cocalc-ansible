@@ -1,11 +1,17 @@
 - hosts: cocalc
   become: true
+  # TODO: do not gather facts on setup, or gather them after setup
   #  gather_facts: no
   pre_tasks:
+    - name: 'apt upgrade'
+      # TODO: use APT task
+      raw: sudo apt update && sudo apt -y upgrade
+      tags:
+        - setup
     - name: 'install python3'
       raw: sudo apt -y install python3
       tags:
-        - sshkeys
+        - setup
 
   roles:
     - role: ssh-auth
@@ -21,6 +27,7 @@
       ssh_public_key_store: 'admin_ssh_keys'
       tags:
         - sshkeys
+        - setup
     - role: geerlingguy.docker
       docker_users:
         - jonas
@@ -28,3 +35,14 @@
       tags:
         - dockerinstall
     - role: cocalc_docker
+    - role: geerlingguy.certbot
+      certbot_auto_renew: true
+      update_certs_command: "((sudo cat /etc/letsencrypt/live/{{inventory_hostname}}/fullchain.pem /etc/letsencrypt/live/{{inventory_hostname}}/privkey.pem | sudo tee /home/ansible/cc_run/haproxy.pem) && docker exec cocalc /etc/init.d/haproxy reload)"
+      certbot_create_command: "{{ certbot_script }} certonly --webroot --webroot-path /home/ansible/cc_run/ --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }} && {{update_certs_command}}"
+      certbot_auto_renew_options: "--quiet --no-self-upgrade && {{update_certs_command}}"
+      certbot_create_if_missing: true
+      certbot_admin_email: cocalc_certbot@jonasotto.com
+      certbot_certs:
+        - domains:
+            - "{{inventory_hostname}}"
+
