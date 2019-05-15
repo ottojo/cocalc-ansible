@@ -23,6 +23,12 @@
       - "/home/ansible/cc_run:/run"
     keep_volumes: true
 
+- name: "apt update in docker container"
+  shell: "docker exec cocalc apt-get update"
+
+- name: "Install full texlive"
+  shell: "docker exec -e DEBIAN_FRONTEND=noninteractive cocalc apt-get install -y texlive-full"
+
 - name: "Create certificate directory"
   file:
     path: "/home/ansible/cc_run/.well-known"
